@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace EmpleadoNamespace;
 public enum Cargos{
     Auxiliar,
@@ -9,50 +11,60 @@ public enum Cargos{
 
 public class Empleado{
 
-    private string Nombre;
-    private string Apellido;
-    private DateTime FechaDeNacimiento;
-    private char EstadoCivil;
-    private DateTime FechaDeIngreso; 
-    private double SueldoBasico;
-    private Cargos Cargo;
+    private string nombre;
+    private string apellido;
+    private DateTime fechaDeNacimiento;
+    private char estadoCivil;
+    private DateTime fechaDeIngreso; 
+    private double sueldoBasico;
+    private Cargos cargo;
 
     public Empleado(string nombre, string apellido, DateTime fecha_de_nacimiento, char estado_civil, DateTime fecha_de_ingreso,double sueldo_basico,Cargos cargo){
-        Nombre = nombre;
-        Apellido = apellido;
-        FechaDeNacimiento = fecha_de_nacimiento;
-        EstadoCivil = estado_civil;
-        FechaDeIngreso = fecha_de_ingreso;
-        SueldoBasico = sueldo_basico;
-        Cargo = cargo;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        fechaDeNacimiento = fecha_de_nacimiento;
+        estadoCivil = estado_civil;
+        fechaDeIngreso = fecha_de_ingreso;
+        sueldoBasico = sueldo_basico;
+        this.cargo = cargo;
     }
 
-    public int antiguedad(){
-        return (FechaDeIngreso - DateTime.now()).Year;
+    public int Antiguedad(){
+        return (DateTime.Now-fechaDeIngreso).Days / 365;
     }
 
-    public int edad(){
-        return DateTime.now().Year-FechaDeNacimiento.Year;
+    public int Edad(){
+        return (DateTime.Now-fechaDeNacimiento).Days/365;
     }
 
     public int JubilacionContador(){
-        int resultado = 65 - this.edad();
+        int resultado = 65 - this.Edad();
         return (resultado >= 0) ? resultado:0;
     }
 
-    public double salario(){
-        double adicional;
-        int antiguedad = this.antiguedad();
+    public double Salario(){
+        double adicional=0;
+        int antiguedad = this.Antiguedad();
         if(antiguedad<20){
-            adicional += 0.01 * this.SueldoBasico;
+            adicional += 0.01*antiguedad* this.sueldoBasico;
         }else{
-            adicional += 0.25 * this.SueldoBasico;
+            adicional += 0.25 * this.sueldoBasico;
         }
-        if(this.Cargo == Cargos.Ingeniero || this.Cargo == Cargos.Especialista){
+        if(this.cargo == Cargos.Ingeniero || this.cargo == Cargos.Especialista){
             adicional*=1.5;
         }
-        if(this.EstadoCivil == 'C'){
+        if(this.estadoCivil == 'C'){
             adicional+=150000;
         }
+        return this.sueldoBasico + adicional;
+    }
+    public void MostrarDatos(){
+        Console.WriteLine("Nombre: " + nombre);
+        Console.WriteLine("Apellido: " + apellido);
+        Console.WriteLine("Fecha de nacimiento: " + fechaDeNacimiento.ToString("dd/MM/yyyy"));
+        Console.WriteLine("Fecha de ingreso: " + fechaDeIngreso.ToString("dd/MM/yyyy"));
+        Console.WriteLine("Estado civil: " + estadoCivil);
+        Console.WriteLine("Sueldo: " + Salario().ToString("N",CultureInfo.CreateSpecificCulture("es-ES")));
+        Console.WriteLine("Cargo: " +  cargo);
     }
 }
